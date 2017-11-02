@@ -1,0 +1,639 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+
+@section Scripts{
+    <script>
+        $('select').each(function () {
+            var $this = $(this), numberOfOptions = $(this).children('option').length;
+
+            $this.addClass('select-hidden');
+            $this.wrap('<div class="select"></div>');
+            $this.after('<div class="select-styled"></div>');
+
+            var $styledSelect = $this.next('div.select-styled');
+            $styledSelect.text($this.children('option').eq(0).text());
+
+            var $list = $('<ul />', {
+                'class': 'select-options'
+            }).insertAfter($styledSelect);
+
+            for (var i = 0; i < numberOfOptions; i++) {
+                $('<li />', {
+                    text: $this.children('option').eq(i).text(),
+                    rel: $this.children('option').eq(i).val()
+                }).appendTo($list);
+            }
+
+            var $listItems = $list.children('li');
+
+            $styledSelect.click(function (e) {
+                e.stopPropagation();
+                $('div.select-styled.active').not(this).each(function () {
+                    $(this).removeClass('active').next('ul.select-options').hide();
+                });
+                $(this).toggleClass('active').next('ul.select-options').toggle();
+            });
+
+            $listItems.click(function (e) {
+                e.stopPropagation();
+                $styledSelect.text($(this).text()).removeClass('active');
+                $this.val($(this).attr('rel'));
+                $list.hide();
+            });
+
+            $(document).click(function () {
+                $styledSelect.removeClass('active');
+                $list.hide();
+            });
+        });
+
+        (function (window) {
+
+            'use strict';
+
+            var support = { animations: Modernizr.cssanimations },
+                animEndEventNames = { 'WebkitAnimation': 'webkitAnimationEnd', 'OAnimation': 'oAnimationEnd', 'msAnimation': 'MSAnimationEnd', 'animation': 'animationend' },
+                animEndEventName = animEndEventNames[Modernizr.prefixed('animation')],
+                onEndAnimation = function (el, callback) {
+                    var onEndCallbackFn = function (ev) {
+                        if (support.animations) {
+                            if (ev.target != this) return;
+                            this.removeEventListener(animEndEventName, onEndCallbackFn);
+                        }
+                        if (callback && typeof callback === 'function') { callback.call(); }
+                    };
+                    if (support.animations) {
+                        el.addEventListener(animEndEventName, onEndCallbackFn);
+                    }
+                    else {
+                        onEndCallbackFn();
+                    }
+                };
+
+            function extend(a, b) {
+                for (var key in b) {
+                    if (b.hasOwnProperty(key)) {
+                        a[key] = b[key];
+                    }
+                }
+                return a;
+            }
+
+            function DialogFx(el, options) {
+                this.el = el;
+                this.options = extend({}, this.options);
+                extend(this.options, options);
+                this.ctrlClose = this.el.querySelector('[data-dialog-close]');
+                this.isOpen = false;
+                this._initEvents();
+            }
+
+            DialogFx.prototype.options = {
+                // callbacks
+                onOpenDialog: function () { return false; },
+                onCloseDialog: function () { return false; }
+            }
+
+            DialogFx.prototype._initEvents = function () {
+                var self = this;
+
+                this.ctrlClose.addEventListener('click', this.toggle.bind(this));
+                document.addEventListener('keydown', function (ev) {
+                    var keyCode = ev.keyCode || ev.which;
+                    if (keyCode === 27 && self.isOpen) {
+                        self.toggle();
+                    }
+                });
+
+                this.el.querySelector('.dialog__overlay').addEventListener('click', this.toggle.bind(this));
+            }
+
+            DialogFx.prototype.toggle = function () {
+                var self = this;
+                if (this.isOpen) {
+                    classie.remove(this.el, 'dialog--open');
+                    classie.add(self.el, 'dialog--close');
+
+                    //add the link code here ......
+                    window.location.href = "./PlanViewTimeSheet.html";
+
+
+
+                    onEndAnimation(this.el.querySelector('.dialog__content'), function () {
+                        classie.remove(self.el, 'dialog--close');
+                    });
+
+                    // callback on close
+                    this.options.onCloseDialog(this);
+                }
+                else {
+                    classie.add(this.el, 'dialog--open');
+                    this.options.onOpenDialog(this);
+                }
+                this.isOpen = !this.isOpen;
+            };
+
+            window.DialogFx = DialogFx;
+
+        })(window);
+
+        (function () {
+
+            var dlgtrigger = document.querySelector('[data-dialog]'),
+                somedialog = document.getElementById(dlgtrigger.getAttribute('data-dialog')),
+                dlg = new DialogFx(somedialog);
+
+            dlgtrigger.addEventListener('click', dlg.toggle.bind(dlg));
+
+        })();
+
+     
+    </script>
+    }
+
+<body >
+
+  <h1> Time Sheet </h1>
+<div class= "wrapper">
+<select id="Employee">
+      <option value="hide">Choose an Employee</option>
+      <option value="january">Myslef</option>
+      <option value="january">Someone Else</option>
+</select>
+<select id="weeks">
+    <option value="hide">Choose a Week</option>
+    <option value="january">19 Jun 2017 to 25 Jun 2017</option>
+    <option value="february">26 Jun 2017 to 02 July 2017</option>
+    <option value="february">03 July 2017 to 09 July 2017</option>
+    <option value="february">10 July 2017 to 16 July 2017</option>
+    <option value="february">17 July 2017 to 23 July 2017</option>
+    <option value="february">24 July 2017 to 31 July 2017</option>
+</select>
+<select id="Time">
+    <option value="hide">Choose a Time Period</option>
+    <option value="2010">Daily</option>
+    <option value="2011">Weekly</option>
+</select>
+  <div>
+
+  </div>
+</div>
+  <div class="back" >
+      <div class="button_base button_roll" data-dialog="somedialog" class="trigger">
+          <div id = "button_pic1">Enter Time Sheet</div>
+          <div id = "button_pic2">Enter Time Sheet</div>
+          <div id = "button_pic3">Enter Time Sheet</div>
+          <div id = "button_pic4">Enter Time Sheet</div>
+      </div>
+  </div>
+  <div id="somedialog" class="dialog dialog--close">
+  					<div class="dialog__overlay"></div>
+  					<div class="dialog__content">
+  						<div class="morph-shape">
+  							<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 560 280" preserveAspectRatio="none">
+  								<rect x="3" y="3" fill="none" width="556" height="276"></rect>
+  							</svg>
+  						</div>
+  						<div class="dialog-inner">
+  							<h2><strong>Hey  </strong> <br>Yal are going to the timesheet</h2>
+  							<div><button class="action" data-dialog-close="a">
+                                  OK, COOL
+</button></div>
+  						</div>
+  					</div>
+  				</div>
+</body>
+
+<style>
+ body {
+
+  font-family: Lato, Arial;
+  color: #fff;
+  background-color: #444B54;
+  text-align: center;
+  padding: 0;
+  margin: 0;
+}
+
+h1 {
+  padding:2em;
+  font-weight: normal;
+  font-size: 40px;
+  font-weight: normal;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.select-hidden {
+  display: none;
+  visibility: hidden;
+}
+
+
+.Bloody_Video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -100;
+  width: 100%;
+  opacity: 0.8;
+}
+
+
+.select {
+  opacity: 0.8;
+  margin: 0;
+  padding: 0;
+  border: 20;
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  font-size: 18px;
+  color: #fff;
+  width: 19em;
+  height: 2.9em;
+  bottom:0;
+}
+
+.select-styled {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: #8199A3;
+  padding: 10px 8px;
+  -moz-transition: all 0.29s ease-in;
+  -o-transition: all 0.29s ease-in;
+  -webkit-transition: all 0.29s ease-in;
+  transition: all 0.29s ease-in;
+}
+.select-styled:after {
+  content: "";
+  width: 0;
+  height: 0;
+  border: 7px solid transparent;
+  border-color: #fff transparent transparent transparent;
+  position: absolute;
+  top: 16px;
+  right: 10px;
+}
+.select-styled:hover {
+  background-color: #B5AFA2;
+}
+.select-styled:active, .select-styled.active {
+  background-color: #B5AFA2;
+}
+.select-styled:active:after, .select-styled.active:after {
+  top: 17px;
+  border-color: transparent transparent #B5AFA2 transparent;
+}
+
+.select-options {
+  opacity: 0.8;
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: 0;
+  z-index: 999;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background-color: #B5AFA2;
+}
+
+.select-options li {
+  margin: 0;
+  z-index: 999;
+  padding: 12px 0;
+  border-top: 1px transparent;
+  -moz-transition: all 0.29s ease-in;
+  -o-transition: all 0.29s ease-in;
+  -webkit-transition: all 0.29s ease-in;
+  transition: all 0.29s ease-in;
+}
+.select-options li:hover {
+  color: #fff;
+  z-index: 999;
+  background: #E1B493 ;
+  transform:scale(1.06,1.06);
+  -webkit-transform:scale(1.06,1.06);
+  -moz-transform:scale(1.06,1.06);
+  -moz-transition: all 0.5s ease-in;
+}
+.select-options li[rel="hide"] {
+  display: none;
+}
+
+.preserve-3d {
+    transform-style: preserve-3d;
+    -webkit-transform-style: preserve-3d;
+}
+.back {
+    width: 100%;
+    height: 270px;
+    float: left;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    counter-increment: bc;
+
+    background-color: rgb(192,192,192,1);
+    bottom: 0;
+    position: fixed;
+}
+
+.button_base {
+    font-size: 18px;
+    position: relative;
+    top: 50%;
+    left: 46%;
+    margin-top: -25px;
+    margin-left: -50px;
+    width: 200px;
+    height: 50px;
+    text-align: center;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-user-select: none;
+    cursor: default;
+}
+
+.button_base:hover {
+    cursor: pointer;
+}
+
+.button_roll {
+    perspective: 500px;
+    -webkit-perspective: 500px;
+    -moz-perspective: 500px;
+    transform-style: preserve-3d;
+    -webkit-transform-style: preserve-3d;
+}
+
+.button_roll div {
+    position: absolute;
+    text-align: center;
+    padding: 12px;
+    pointer-events: none;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+}
+
+.button_roll div:nth-child(1) {
+    color: #000000;
+    background-color: #ffffff;
+    z-index: 0;
+    width: 100%;
+    height: 50px;
+    clip: rect(0px, 100px, 50px, 0px);
+    position: absolute;
+    transition: all 0.2s ease;
+    -webkit-transition: all 0.2s ease;
+    -moz-transition: all 0.2s ease;
+    transform: rotateX(0deg);
+    -webkit-transform: rotateX(0deg);
+    -moz-transform: rotateX(0deg);
+    transform-origin: 50% 50% -25px;
+    -webkit-transform-origin: 50% 50% -25px;
+    -moz-transform-origin: 50% 50% -25px;
+}
+
+.button_roll div:nth-child(2) {
+    color: #000000;
+    background-color: #000000;
+    z-index: -1;
+    width: 100%;
+    height: 50px;
+    clip: rect(0px, 100px, 50px, 0px);
+    position: absolute;
+    transform: rotateX(90deg);
+    -webkit-transform: rotateX(90deg);
+    -moz-transform: rotateX(90deg);
+    transition: all 0.2s ease;
+    -webkit-transition: all 0.2s ease;
+    -moz-transition: all 0.2s ease;
+    transform-origin: 50% 50% -25px;
+    -webkit-transform-origin: 50% 50% -25px;
+    -moz-transform-origin: 50% 50% -25px;
+}
+
+.button_roll div:nth-child(3) {
+    color: #000000;
+    background-color: #ffffff;
+    z-index: 0;
+    width: 100%;
+    height: 50px;
+    clip: rect(0px, 200px, 50px, 100px);
+    position: absolute;
+    transition: all 0.2s ease 0.1s;
+    -webkit-transition: all 0.2s ease 0.1s;
+    -moz-transition: all 0.2s ease 0.1s;
+    transform: rotateX(0deg);
+    -webkit-transform: rotateX(0deg);
+    -moz-transform: rotateX(0deg);
+    transform-origin: 50% 50% -25px;
+    -webkit-transform-origin: 50% 50% -25px;
+    -moz-transform-origin: 50% 50% -25px;
+}
+
+.button_roll div:nth-child(4) {
+    color: #000000;
+    background-color: #000000;
+    z-index: -1;
+    width: 100%;
+    height: 50px;
+    clip: rect(0px, 200px, 50px, 100px);
+    position: absolute;
+    transform: rotateX(-90deg);
+    -webkit-transform: rotateX(-90deg);
+    -moz-transform: rotateX(-90deg);
+    transition: all 0.2s ease 0.1s;
+    -webkit-transition: all 0.2s ease 0.1s;
+    -moz-transition: all 0.2s ease 0.1s;
+    transform-origin: 50% 50% -25px;
+    -webkit-transform-origin: 50% 50% -25px;
+    -moz-transform-origin: 50% 50% -25px;
+}
+
+.button_roll:hover div:nth-child(1) {
+    background-color: #000000;
+    transition: all 0.2s ease;
+    -webkit-transition: all 0.2s ease;
+    -moz-transition: all 0.2s ease;
+    transform: rotateX(-90deg);
+    -webkit-transform: rotateX(-90deg);
+    -moz-transform: rotateX(-90deg);
+}
+
+.button_roll:hover div:nth-child(2) {
+    color: #ffffff;
+    transition: all 0.2s ease;
+    -webkit-transition: all 0.2s ease;
+    -moz-transition: all 0.2s ease;
+    transform: rotateX(0deg);
+    -webkit-transform: rotateX(0deg);
+    -moz-transform: rotateX(0deg);
+}
+
+
+
+
+.button_roll:hover div:nth-child(3) {
+    background-color: #000000;
+    transition: all 0.2s ease 0.1s;
+    -webkit-transition: all 0.2s ease 0.1s;
+    -moz-transition: all 0.2s ease 0.1s;
+    transform: rotateX(90deg);
+    -webkit-transform: rotateX(90deg);
+    -moz-transform: rotateX(90deg);
+}
+
+.button_roll:hover div:nth-child(4) {
+    color: #ffffff;
+    transition: all 0.2s ease 0.1s;
+    -webkit-transition: all 0.2s ease 0.1s;
+    -moz-transition: all 0.2s ease 0.1s;
+    transform: rotateX(0deg);
+    -webkit-transform: rotateX(0deg);
+    -moz-transform: rotateX(0deg);
+}
+
+button {
+	padding: 1em 2em;
+	outline: none;
+	font-weight: 600;
+	border: none;
+	color: #fff;
+	background: #000000;
+}
+
+.dialog,
+.dialog__overlay {
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+}
+
+.dialog {
+	position: fixed;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-align-items: center;
+	align-items: center;
+	-webkit-justify-content: center;
+	justify-content: center;
+	pointer-events: none;
+}
+
+.dialog__overlay {
+	position: absolute;
+	z-index: 1;
+	background: rgba(55, 58, 71, 0.9);
+	opacity: 0;
+	-webkit-transition: opacity 0.3s;
+	transition: opacity 0.3s;
+	-webkit-backface-visibility: hidden;
+}
+
+.dialog--open .dialog__overlay {
+	opacity: 1;
+	pointer-events: auto;
+}
+
+.dialog__content {
+	width: 50%;
+
+	min-width: 290px;
+	background: #fff;
+	padding: 4em;
+	text-align: center;
+	position: relative;
+	z-index: 999;
+	opacity: 0;
+}
+
+.dialog--open .dialog__content {
+	pointer-events: auto;
+}
+
+/* Content */
+.dialog h2 {
+	margin: 0;
+	font-weight: 400;
+	font-size: 2em;
+	padding: 0 0 2em;
+	margin: 0;
+  z-index: 999;
+  color: #000000;
+}
+
+.dialog--open .dialog__overlay {
+	-webkit-transition-duration: 0.8s;
+	transition-duration: 0.8s;
+}
+
+.dialog--close .dialog__overlay {
+	-webkit-transition-duration: 0.5s;
+	transition-duration: 0.5s;
+}
+
+.dialog__content {
+	padding: 0;
+	background: transparent;
+}
+
+.dialog.dialog--open .dialog__content {
+	opacity: 1;
+}
+
+.morph-shape {
+	position: absolute;
+	width: calc(100% + 4px);
+	height: calc(100% + 4px);
+	top: -2px;
+	left: -2px;
+	z-index: -1;
+}
+
+.morph-shape svg rect {
+	stroke: #fff;
+	stroke-width: 2px;
+	stroke-dasharray: 1680;
+}
+
+.dialog--open .morph-shape svg rect {
+	-webkit-animation: anim-dash 0.6s forwards;
+	animation: anim-dash 0.6s forwards;
+}
+
+.dialog-inner {
+	opacity: 0;
+	background: #fff;
+}
+
+.dialog--open .dialog-inner {
+	padding: 4em;
+	opacity: 1;
+	-webkit-transition: opacity 0.85s 0.35s;
+	transition: opacity 0.85s 0.35s;
+}
+
+.dialog.dialog--open h2 {
+	-webkit-animation: anim-elem-1 0.7s ease-out both;
+	animation: anim-elem-1 0.7s ease-out both;
+}
+
+.dialog.dialog--open button {
+	-webkit-animation: anim-elem-2 0.7s ease-out both;
+	animation: anim-elem-2 0.7s ease-out both;
+}
+
+
+</style>
