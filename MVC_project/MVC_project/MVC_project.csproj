@@ -124,8 +124,10 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\BookForOtherController.cs" />
     <Compile Include="Controllers\HappyController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\MySelfController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -237,8 +239,8 @@
     <None Include="readme.txt" />
     <Content Include="Views\Happy\abc.cshtml" />
     <Content Include="Views\Happy\Index.cshtml" />
-    <Content Include="Views\Home\MySelf.cshtml" />
-    <Content Include="Views\Home\SomeOneElse.cshtml" />
+    <Content Include="Views\MySelf\MySelf.cshtml" />
+    <Content Include="Views\BookForOther\BookForOther.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
